@@ -32,7 +32,8 @@ let settings = {
     from_email: '',
     subject: '',
     letter_file: 'letter.html',
-    attachment_file: 'attachment_source.html'
+    attachment_file: 'attachment_source.html',
+    pdf_filename: 'attachment.pdf'
 };
 
 if (fs.existsSync(SETTINGS_FILE)) {
@@ -74,6 +75,7 @@ bot.onText(/\/start/, authorized((msg) => {
 - \`/fromname <Your Name>\` - Set a specific 'From' name.
 - \`/frommail <your@email.com>\` - Set a specific 'From' email.
 - \`/subject <Your Subject>\` - Set a specific subject line.
+- \`/setpdfname <filename.pdf>\` - Set the name for the PDF attachment.
 - \`/selectfrom\` - Choose a 'From' email from config.
 - \`/selectsubject\` - Choose a subject from config.
 
@@ -81,8 +83,14 @@ bot.onText(/\/start/, authorized((msg) => {
 1. Upload a file (.html, .txt).
 2. Use one of these commands to assign it:
    - \`/setletter\` - Assigns the last uploaded file as the HTML letter.
-   - \`/setattachment\` - Assigns the last uploaded file as the HTML source for the PDF attachment.
+   - \`/setattachment\` - Assigns the last uploaded file as the HTML source for the PDF attachment. The bot will automatically convert this HTML to a PDF. You can use the placeholder \`{{email}}\` in this file to insert the recipient's email address.
    - \`/setcontacts\` - Assigns the last uploaded .txt file as the contact list.
+
+**Dynamic Tags for PDF Filename:**
+You can use the following tags in the PDF filename (set via \`/setpdfname\`):
+- \`{{date}}\` - Replaced with the current date (YYYY-MM-DD).
+- \`{{domain}}\` - Replaced with the recipient's email domain.
+   Example: \`/setpdfname Report-{{domain}}-{{date}}.pdf\`
 
 **Action Commands:**
 - \`/send\` - Show a preview of the campaign and prepare to send.
@@ -110,6 +118,12 @@ bot.onText(/\/subject (.+)/, authorized((msg, match) => {
     settings.subject = match[1];
     saveSettings();
     bot.sendMessage(msg.chat.id, `✉️ Subject set to: *${settings.subject}*`, { parse_mode: 'Markdown' });
+}));
+
+bot.onText(/\/setpdfname (.+)/, authorized((msg, match) => {
+    settings.pdf_filename = match[1];
+    saveSettings();
+    bot.sendMessage(msg.chat.id, `📄 PDF filename set to: *${settings.pdf_filename}*`, { parse_mode: 'Markdown' });
 }));
 
 // Selection commands
