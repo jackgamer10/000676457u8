@@ -33,7 +33,10 @@ let settings = {
     subject: '',
     letter_file: 'letter.html',
     attachment_file: 'attachment_source.html',
-    pdf_filename: 'attachment.pdf'
+    pdf_filename: 'attachment.pdf',
+    delay_between_emails: 2,
+    pulse_email_count: 50,
+    pulse_delay_minutes: 5
 };
 
 if (fs.existsSync(SETTINGS_FILE)) {
@@ -76,6 +79,9 @@ bot.onText(/\/start/, authorized((msg) => {
 - \`/frommail <your@email.com>\` - Set a specific 'From' email.
 - \`/subject <Your Subject>\` - Set a specific subject line.
 - \`/setpdfname <filename.pdf>\` - Set the name for the PDF attachment.
+- \`/setdelay <seconds>\` - Set the delay (in seconds) between each email.
+- \`/setpulsecount <count>\` - Set the number of emails to send before a longer pause.
+- \`/setpulsedelay <minutes>\` - Set the duration (in minutes) of the longer pause.
 - \`/selectfrom\` - Choose a 'From' email from config.
 - \`/selectsubject\` - Choose a subject from config.
 
@@ -124,6 +130,24 @@ bot.onText(/\/setpdfname (.+)/, authorized((msg, match) => {
     settings.pdf_filename = match[1];
     saveSettings();
     bot.sendMessage(msg.chat.id, `📄 PDF filename set to: *${settings.pdf_filename}*`, { parse_mode: 'Markdown' });
+}));
+
+bot.onText(/\/setdelay (\d+)/, authorized((msg, match) => {
+    settings.delay_between_emails = parseInt(match[1], 10);
+    saveSettings();
+    bot.sendMessage(msg.chat.id, `⏱ Delay between emails set to: *${settings.delay_between_emails} seconds*`, { parse_mode: 'Markdown' });
+}));
+
+bot.onText(/\/setpulsecount (\d+)/, authorized((msg, match) => {
+    settings.pulse_email_count = parseInt(match[1], 10);
+    saveSettings();
+    bot.sendMessage(msg.chat.id, `🎯 Pulse email count set to: *${settings.pulse_email_count}*`, { parse_mode: 'Markdown' });
+}));
+
+bot.onText(/\/setpulsedelay (\d+)/, authorized((msg, match) => {
+    settings.pulse_delay_minutes = parseInt(match[1], 10);
+    saveSettings();
+    bot.sendMessage(msg.chat.id, `⏸ Pulse delay set to: *${settings.pulse_delay_minutes} minutes*`, { parse_mode: 'Markdown' });
 }));
 
 // Selection commands

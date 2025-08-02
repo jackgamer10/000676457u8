@@ -98,6 +98,16 @@ async function main() {
                 status.sent++;
                 await fs.writeFile(STATUS_FILE, JSON.stringify(status, null, 2));
             }
+
+            // --- 3c. Apply Delays ---
+            if (settings.delay_between_emails > 0) {
+                await new Promise(resolve => setTimeout(resolve, settings.delay_between_emails * 1000));
+            }
+            if (settings.pulse_email_count > 0 && status.sent > 0 && status.sent % settings.pulse_email_count === 0 && settings.pulse_delay_minutes > 0) {
+                status.last_message = `Reached ${status.sent} emails. Pausing for ${settings.pulse_delay_minutes} minutes...`;
+                await fs.writeFile(STATUS_FILE, JSON.stringify(status, null, 2));
+                await new Promise(resolve => setTimeout(resolve, settings.pulse_delay_minutes * 60 * 1000));
+            }
         }
 
         await browser.close();
