@@ -33,6 +33,13 @@ A powerful Telegram bot to manage and automate your email campaigns directly fro
     npm install
     ```
 
+    ### For Windows Users
+    A `setup.bat` script is provided to automate the setup process. Simply double-click the `setup.bat` file to run it. The script will:
+    - Check if Node.js and npm are installed.
+    - Install the required dependencies.
+    - Create the `.env` and `config.json` files if they don't exist.
+    - Open the configuration files in Notepad for you to edit.
+
 3.  **Create the `.env` file:**
     Create a file named `.env` in the root of the project and add your Telegram Bot Token and your Telegram User ID:
     ```
