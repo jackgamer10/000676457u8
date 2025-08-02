@@ -1,0 +1,10 @@
+{
+    "from_emails": [
+        "example.sender1@yourdomain.com",
+        "example.sender2@yourdomain.com"
+    ],
+    "subjects": [
+        "Your weekly update",
+        "A special offer for you"
+    ]
+}
