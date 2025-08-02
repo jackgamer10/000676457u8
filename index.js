@@ -98,6 +98,11 @@ You can use the following tags in the PDF filename (set via \`/setpdfname\`):
 - \`{{domain}}\` - Replaced with the recipient's email domain.
    Example: \`/setpdfname Report-{{domain}}-{{date}}.pdf\`
 
+**Dynamic Random Number Tag:**
+You can use the following tag to insert a random number into the 'From' name, subject, email body, and PDF attachment:
+- \`{{random_numbX}}\` - Replaced with a random number with X digits.
+   Example: \`{{random_numb5}}\` will be replaced by a 5-digit random number.
+
 **Action Commands:**
 - \`/send\` - Show a preview of the campaign and prepare to send.
 - \`/confirm\` - (Only after /send) Starts the email campaign.

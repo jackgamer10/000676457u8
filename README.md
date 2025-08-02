@@ -13,6 +13,7 @@ A powerful Telegram bot to manage and automate your email campaigns directly fro
     - Use multiple SMTP servers for sending emails (rotates through the list).
 - **Dynamic PDF Filenames:** Customize the name of the generated PDF attachment with dynamic tags like `{{date}}` and `{{domain}}`.
 - **Rate Limiting:** Control the email sending rate with configurable delays between emails and a longer "pulse" delay after a certain number of emails.
+- **Random Number Tags:** Insert random numbers of a specified length into the 'From' name, subject, and email content.
 
 ## Prerequisites
 
@@ -99,6 +100,11 @@ You can use the following tags in the PDF filename (set via `/setpdfname`):
 - `{{date}}` - Replaced with the current date (YYYY-MM-DD).
 - `{{domain}}` - Replaced with the recipient's email domain.
    Example: `/setpdfname Report-{{domain}}-{{date}}.pdf`
+
+**Dynamic Random Number Tag:**
+You can use the following tag to insert a random number into the 'From' name, subject, email body, and PDF attachment:
+- `{{random_numbX}}` - Replaced with a random number with X digits.
+  Example: `{{random_numb5}}` will be replaced by a 5-digit random number.
 
 **Action Commands:**
 - `/send` - Show a preview of the campaign and prepare to send.

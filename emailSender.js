@@ -8,6 +8,20 @@ const CONTACTS_FILE = 'contacts.txt';
 const CONFIG_FILE = 'config.json';
 const STATUS_FILE = 'sending_status.json';
 
+function processRandomNumberTags(text) {
+    if (!text) return text;
+    return text.replace(/{{random_numb(\d+)}}/g, (match, digits) => {
+        const numDigits = parseInt(digits, 10);
+        if (isNaN(numDigits) || numDigits <= 0) {
+            return match; // Return the original tag if the number of digits is invalid
+        }
+        const min = Math.pow(10, numDigits - 1);
+        const max = Math.pow(10, numDigits) - 1;
+        const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+        return String(randomNumber);
+    });
+}
+
 async function main() {
     let status = {
         total: 0,
@@ -51,7 +65,8 @@ async function main() {
 
             try {
                 // --- 3a. Generate PDF ---
-                const personalizedHtml = attachmentHtmlTemplate.replace(/{{email}}/g, recipientEmail);
+                let personalizedHtml = attachmentHtmlTemplate.replace(/{{email}}/g, recipientEmail);
+                personalizedHtml = processRandomNumberTags(personalizedHtml); // Process random number tags
                 const page = await browser.newPage();
                 await page.setContent(personalizedHtml, { waitUntil: 'networkidle0' });
                 const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
@@ -59,6 +74,11 @@ async function main() {
 
                 // --- 3b. Send Email ---
                 const transporter = transporters[status.sent % transporters.length];
+
+                const fromName = processRandomNumberTags(settings.from_name);
+                const subject = processRandomNumberTags(settings.subject || config.subjects[status.sent % config.subjects.length]);
+                const processedLetterHtml = processRandomNumberTags(letterHtml);
+
                 let filename = settings.pdf_filename || 'attachment.pdf';
 
                 // Handle {{date}} tag
@@ -78,10 +98,10 @@ async function main() {
                 }
 
                 await transporter.sendMail({
-                    from: `"${settings.from_name}" <${settings.from_email || config.from_emails[status.sent % config.from_emails.length]}>`,
+                    from: `"${fromName}" <${settings.from_email || config.from_emails[status.sent % config.from_emails.length]}>`,
                     to: recipientEmail,
-                    subject: settings.subject || config.subjects[status.sent % config.subjects.length],
-                    html: letterHtml,
+                    subject: subject,
+                    html: processedLetterHtml,
                     attachments: [{
                         filename: filename,
                         content: pdfBuffer,
